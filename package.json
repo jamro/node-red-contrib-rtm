@@ -1,0 +1,43 @@
+{
+  "name": "node-red-contrib-rtm",
+  "version": "0.0.1",
+  "description": "Node-RED nodes for Remember the Milk (RTM)",
+  "license": "MIT",
+  "author": "Krzysztof Jamroz <jamro@jamro.net>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamro/node-red-contrib-rtm.git"
+  },
+  "keywords": [
+    "Node-RED",
+    "nodes",
+    "rtm"
+  ],
+  "main": "none",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-simple-mocha": "^0.4.1",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.2.0",
+    "node-red": "^0.16.2"
+  },
+  "engines": {
+    "node": ">=0.10"
+  },
+  "node-red": {
+    "nodes": {
+      "RTM": "nodes/rtm.js",
+      "RTM Auth": "nodes/rtm_auth.js",
+      "RTM Add Task": "nodes/rtm_add_task.js"
+    }
+  },
+  "dependencies": {
+    "md5": "^2.2.1",
+    "rtm-js": "^1.0.2"
+  }
+}

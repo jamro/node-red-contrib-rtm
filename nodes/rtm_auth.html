@@ -1,0 +1,105 @@
+<script type="text/javascript">
+  RED.nodes.registerType('RTM Auth',{
+    category: 'RTM',
+    color: '#bbbbbb',
+    defaults: {
+      connection: {value:"", type:"RTM"},
+      name: {value: ""}
+    },
+    inputs: 0,
+    outputs: 0,
+    icon: "rtm_lock.png",
+    label: function() {
+      return this.name||"RTM Auth";
+    },
+    button: {
+      onclick: function() {
+        if(this.processing == true) return;
+        this.processing = true;
+        var self = this;
+        $.ajax({
+          url: "rtm/auth/"+this.id,
+          type:"POST",
+          dataType: 'json',
+          async: false,
+          success: function(resp) {
+            switch(resp.type) {
+              case 'auth-url':
+                handleAuthUrlResponse(resp);
+                break;
+              case 'token':
+                handleTokenResponse(resp);
+                break;
+              case 'error':
+                handleErrorResponse(resp);
+                break;
+              default:
+                handleDefaultResponse(resp);
+                break;
+            }
+            
+            self.processing = false;
+          },
+          error: function(jqXHR,textStatus,errorThrown) {
+            RED.notify("Error: Cannot send auth request","error");
+            self.processing = false;
+          }
+        });
+      }
+    }
+  });
+  
+  function handleDefaultResponse(resp) {
+    RED.notify(resp.content,"success");
+  }
+  
+  function handleTokenResponse(resp) {
+    prompt("Use this token in configuration of your RTM connection. Copy it to the clipboard (Ctrl+C)", resp.content);
+  }
+    
+  function handleAuthUrlResponse(resp) {
+    window.open(resp.content, "_blank"); 
+    RED.notify("Check your pop-up blocker if you were not redirected to Remember the Milk website.","success");
+  }
+    
+  function handleErrorResponse(resp) {
+    RED.notify(resp.content,"error");
+  }
+</script>
+
+<script type="text/x-red" data-template-name="RTM Auth">
+  <div class="form-row">
+    <label for="node-input-connection"><i class="fa fa-link"></i> Connection</label>
+    <select id="node-input-connection"></select>
+  </div>   
+  <div class="form-row">
+    <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>   
+</script>
+
+<script type="text/x-red" data-help-name="RTM Auth">
+  <p>
+    This node authorize in <a href="https://www.rememberthemilk.com/" target="_blank">Remember the Milk</a> app (RTM). Without that step RTM API cannot be used. See authorization instruction below
+  </p>
+  <p>
+    <strong>API AUTHORIZATION</strong>    
+    <p>
+      Before using RTM nodes, you must complete authorization process to connect with the API properly. 
+      Follow those steps:
+      <ol>
+        <li>Prepare <strong>API Key</strong> and <strong>API Secret</strong> required to access RTM API (Visit Remember the Milk <a href="https://www.rememberthemilk.com/services/api/" target="_blank">API page</a> for more information about that)</li>
+        <li>Add <strong>RTM Auth</strong> node to your flow</li>
+        <li>Double click the node to configure it. Create a new <strong>Connection</strong>. At this stage leave <strong>Token</strong> field empty and enter just your <strong>API Key</strong> and <strong>API Secret</strong>.</li>
+        <li>Click <strong>Add</strong> and <strong>Done</strong> to save the configuration</li>
+        <li>Deploy the flow</li>
+        <li>Click button attached to the left side of <strong>RTM Auth</strong> node. It should redirect you to RTM authorization page. If the page was not opened, check your pop-up blocker settings</li>
+        <li>At RTM website click <strong>&quot;OK, I'll allow it&quot;</strong> button to authorize Node RED and connect it to your RTM account (you may be asked to login at first).</li>
+        <li>Close RTM website and go back to Node RED flow. </li>
+        <li>Click <strong>RTM Auth</strong> button once again. It will show a popup with Authorization Token. Copy it to the clipboard (Ctrl + C)</li>        
+        <li>Double click on <strong>RTM Auth</strong> node and edit currently selected <strong>Connection</strong>. Paste <strong>Token</strong> value from clipboard (Ctrl+V) and save the connection settings</li>
+        <li>Deploy the flow. If everything went well your RTM login name should be visible below <strong>RTM Auth</strong> node </li>
+      </ol>
+    </p>
+  </p>
+</script>

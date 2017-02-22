@@ -1,0 +1,38 @@
+<script type="text/javascript">
+  RED.nodes.registerType('RTM',{
+    category: 'config',
+    defaults: {
+      key: {value: "", required: true},
+      secret: {value: "", required: true},
+      token: {value: ""}
+    },
+    label: function() {
+      return this.key;
+    }
+  });  
+</script>
+
+<script type="text/x-red" data-template-name="RTM">
+  <div class="form-row">
+    <label for="node-config-input-key"><i class="fa fa-key"></i> API Key</label>
+    <input type="text" id="node-config-input-key" placeholder="1234567890abcdef1234567890abcdef">
+  </div>   
+  <div class="form-row">
+    <label for="node-config-input-secret"><i class="fa fa-lock"></i> API Secret</label>
+    <input type="text" id="node-config-input-secret" placeholder="1234567890abcdef">
+  </div>    
+  <div class="form-row">
+    <label for="node-config-input-token"><i class="fa fa-key"></i> Token</label>
+    <input type="text" id="node-config-input-token" placeholder="1234567890abcdef1234567890abcdef12345678">
+  </div>  
+</script>
+
+<script type="text/x-red" data-help-name="RTM">
+  <p>
+    <strong>API AUTHORIZATION</strong>    
+    <p>
+      Before using RTM nodes, you must complete authorization process to connect with the API properly. 
+      Check <strong>RTM Auth</strong> node for more details
+    </p>
+  </p>
+</script>
