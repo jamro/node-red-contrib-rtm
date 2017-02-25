@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-rtm",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Node-RED nodes for Remember the Milk (RTM)",
   "license": "MIT",
   "author": "Krzysztof Jamroz <jamro@jamro.net>",
