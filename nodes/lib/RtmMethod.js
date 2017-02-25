@@ -9,4 +9,8 @@ module.exports = function(connection) {
     smartParse = smartParse ? 1 : 0;
     connection.call('rtm.tasks.add', {name: name, parse: smartParse}, done);        
   };
+  
+  this.search = function(query, done) {
+    connection.call('rtm.tasks.getList', {filter: query}, done);        
+  };
 };

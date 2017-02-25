@@ -9,12 +9,15 @@ describe('RTM Method', function() {
   beforeEach(function() {    
     connection = {      
       addTaskResponse: {},
+      getTaskListError: undefined,
+      getTaskListResponse: {},
       addTaskError: undefined,
       lastCallArgs: {},
       call: function(method, args, done) {
         this.lastCallArgs = args;
         switch(method) {   
           case 'rtm.tasks.add': return done(this.addTaskResponse, this.addTaskError);
+          case 'rtm.tasks.getList': return done(this.getTaskListResponse, this.getTaskListError);
           default: throw new Error(method + " is not implemented");
         }
       }
@@ -57,6 +60,19 @@ describe('RTM Method', function() {
       done();
     });
   });
+  
+  it('should search for tasks', function(done) {
+    var method = new RtmMethod(connection);    
+    connection.getTaskListResponse = {id: 82513};
+    method.search("my query", function(result, err) {
+      should.exist(result);
+      should.not.exist(err);
+      result.should.have.property('id', 82513);
+      connection.lastCallArgs.should.have.property('filter', 'my query');
+      done();
+    });
+  });
+  
   it('should forward API errors when adding tasks', function(done) {
     var method = new RtmMethod(connection);    
     connection.addTaskResponse = undefined;
@@ -65,6 +81,18 @@ describe('RTM Method', function() {
       should.exist(err);
       should.not.exist(result);
       err.should.equal("Ups! Error #9483");
+      done();
+    });
+  });
+  
+  it('should forward API errors when searching', function(done) {
+    var method = new RtmMethod(connection);    
+    connection.getTaskListResponse = undefined;
+    connection.getTaskListError = "Ups! Error #5342";
+    method.search("some query", function(result, err) {
+      should.exist(err);
+      should.not.exist(result);
+      err.should.equal("Ups! Error #5342");
       done();
     });
   });
