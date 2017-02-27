@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-rtm",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Node-RED nodes for Remember the Milk (RTM)",
   "license": "MIT",
   "author": "Krzysztof Jamroz <jamro@jamro.net>",
@@ -33,6 +33,7 @@
     "nodes": {
       "RTM": "nodes/rtm.js",
       "RTM Auth": "nodes/rtm_auth.js",
+      "RTM Call": "nodes/rtm_call.js",
       "RTM Add Task": "nodes/rtm_add_task.js"
     }
   },

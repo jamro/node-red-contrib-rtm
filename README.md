@@ -7,6 +7,12 @@ A set of nodes for [Node-RED](http://nodered.org) that allows integration with [
 This package can be installed from the 'manage palette' option in the Node-RED menu. Alternatively in your Node-RED user directory, typically ~/.node-red, run
 
     npm install node-red-contrib-rtm
+    
+## Nodes
+
+- **RTM Auth** - helps to obtain API Token and setup an authorized connection to the API
+- **RTM Call** - a generic node that calls any method of the API
+- **RTM Add Task** - add new task to Remember the Milk app
 
 ## License
 

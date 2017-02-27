@@ -75,6 +75,9 @@ module.exports = function(options) {
   };
   
   this.call = function(method, args, done) {
+    if(typeof(args) != 'object') {
+      return done(null, "args parameter must be an object!");
+    }
     callQueue.unshift({
       method: method,
       args: args,

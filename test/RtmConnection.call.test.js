@@ -49,6 +49,20 @@ describe('RTM Connetion: API Calls', function() {
       should.not.exist(result);
       done();
     });
+  });  
+  it('should return error if arguments are not an object', function(done) {
+    var rtmMock = {get: function(method, args, done) {
+      done({rsp: {stat: 'ok'}});
+    }};
+    var rtm = new RtmConnection({key: 'key123456', secret: 'secretABCDEFGH', rtm: rtmMock});
+    rtm.setToken('TOKEN09876');
+    rtm.setTimeline(123);
+    rtm.call('rtm.some.method', "string", function(result, err) {
+      should.exist(err);
+      err.should.match(/arg/i);
+      should.not.exist(result);
+      done();
+    });
   });
   it('should retrieve API timeline if there is NOT any', function(done) {
     function handleTimeline(method, args, done) {

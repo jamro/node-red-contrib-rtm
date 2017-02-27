@@ -1,0 +1,57 @@
+<script type="text/javascript">
+  RED.nodes.registerType('RTM Call',{
+    category: 'RTM',
+    color: '#bbbbbb',
+    defaults: {
+      connection: {value:"", type:"RTM"},
+      method: {value: 'rtm.test.echo', required: true},
+      name: {value: ""}      
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: "rtm_left.png",
+    label: function() {
+      return this.name||"RTM Call";
+    }
+  });
+</script>
+
+<script type="text/x-red" data-template-name="RTM Call">
+  <div class="form-row">
+    <label for="node-input-connection"><i class="fa fa-link"></i> Connection</label>
+    <select id="node-input-connection"></select>
+  </div> 
+  <div class="form-row">
+    <label for="node-input-method"><i class="fa fa-bolt" aria-hidden="true"></i> Method</label>
+    <div style="display: inline-block; position: relative; width: 70%; height: 20px;">
+      <div style="position: absolute; left: 0px; right: 40px;">
+        <input type="text" id="node-input-method" style="width: 100%" placeholder="rtm.test.echo">
+      </div>
+      <a id="node-input-lookup-connection" class="editor-button" style="position: absolute; right: 0px; top: 0px;" href="https://www.rememberthemilk.com/services/api/methods.rtm" target="_blank">
+        <i class="fa fa-question" aria-hidden="true"></i>
+      </a>
+    </div>   
+  </div>     
+  <div class="form-row">
+    <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
+  </div>   
+</script>
+
+<script type="text/x-red" data-help-name="RTM Call">
+  <p>
+    Execute one of <a href="https://www.rememberthemilk.com/" target="_blank">Remember the Milk</a> API Methods.
+  </p>
+  <p>
+    List of supported API methods and their documentation can be found 
+    <a href="https://www.rememberthemilk.com/services/api/methods.rtm" target="_blank">here</a>.
+    <code>msg.payload</code> is passed as argument to API call.
+  </p>  
+  <p>
+    The node outputs raw response from RTM API.
+  </p>
+  <p>
+    <strong>IMPORTANT:</strong>
+    <em>In most cases, before using the node you must authorize Node RED to connect with Remember the Milk API. See <strong>RTM Auth</strong> node description for more details.</em>
+  </p>
+</script>
