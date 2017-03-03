@@ -10,19 +10,23 @@ describe('RTM Method', function() {
     connection = {      
       addTaskResponse: {},
       getTaskListError: undefined,
-      getTaskListResponse: {},
+      getTaskListResponse: {tasks: {list: []}},
       addTaskError: undefined,
+      getLocationsListError: undefined,
+      getLocationsListResponse: {locations: {location: []}},
       lastCallArgs: {},
       call: function(method, args, done) {
         this.lastCallArgs = args;
         switch(method) {   
           case 'rtm.tasks.add': return done(this.addTaskResponse, this.addTaskError);
           case 'rtm.tasks.getList': return done(this.getTaskListResponse, this.getTaskListError);
+          case 'rtm.locations.getList': return done(this.getLocationsListResponse, this.getLocationsListError);
           default: throw new Error(method + " is not implemented");
         }
       }
     };
   });
+
   it('should throw error if connection is not provided', function() {
     should.throw(
       function() {
@@ -30,9 +34,7 @@ describe('RTM Method', function() {
         method.should.be.ok();
       },
       /connection/i
-    );
-    
-    
+    );    
   });
   
   it('should add tasks', function(done) {
@@ -63,12 +65,36 @@ describe('RTM Method', function() {
   
   it('should search for tasks', function(done) {
     var method = new RtmMethod(connection);    
-    connection.getTaskListResponse = {id: 82513};
+    connection.getLocationsListResponse = {locations: {location: [{id: 4, name: "Loc23" }]}};    
+    connection.getTaskListResponse = {id: 82513, tasks: {list: [
+      {taskseries: [
+        {name: "task 1"},
+        {name: "task 2", location_id: 4}
+      ]},
+      {taskseries: [
+        {name: "task 3"}
+      ]}
+    ]}};
     method.search("my query", function(result, err) {
       should.exist(result);
       should.not.exist(err);
-      result.should.have.property('id', 82513);
-      connection.lastCallArgs.should.have.property('filter', 'my query');
+      result.should.have.property('tasks');
+      result.tasks.should.have.length(3);
+      result.tasks[0].should.have.property('name', 'task 1');
+      result.tasks[1].should.have.property('name', 'task 2');
+      result.tasks[1].should.have.property('location', 'Loc23');
+      result.tasks[2].should.have.property('name', 'task 3');
+      done();
+    });
+  });
+
+
+  it('should throw error if search response is incomplete', function(done) {
+    var method = new RtmMethod(connection);    
+    connection.getTaskListResponse = {tasks: null};
+    method.search("my query", function(result, err) {
+      should.not.exist(result);
+      should.exist(err);
       done();
     });
   });
