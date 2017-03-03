@@ -13,6 +13,7 @@ This package can be installed from the 'manage palette' option in the Node-RED m
 - **RTM Auth** - helps to obtain API Token and setup an authorized connection to the API
 - **RTM Call** - a generic node that calls any method of the API
 - **RTM Add Task** - add new task to Remember the Milk app
+- **RTM Search** - search for tasks that match the query
 
 ## License
 
