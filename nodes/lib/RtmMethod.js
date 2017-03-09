@@ -15,14 +15,21 @@ module.exports = function(connection) {
       if(err) {
         return done(null, err);
       }
+      if(rsp.tasks && !rsp.tasks.list) {
+        return done({tasks: []});          
+      }
       if(!rsp.tasks || !rsp.tasks.list || !Array.isArray(rsp.tasks.list)) {
-        return done(null, "Invalid rtm.tasks.getlist response");
+        return done(null, "Invalid rtm.tasks.getList response: " + JSON.stringify(rsp));
       }
       var tasks = [];
       tasks = rsp.tasks.list.reduce(function(a, b) {
         if(Array.isArray(b.taskseries)) {
           a = a.concat(b.taskseries);
           return a;
+        }
+        if(typeof(b.taskseries) == 'object') {
+          a.push(b.taskseries);
+		  return a;
         }
         return a;
       }, tasks);      
@@ -40,10 +47,10 @@ module.exports = function(connection) {
           return done(null, err);
         }
         if(!rsp.locations || !rsp.locations.location || !Array.isArray(rsp.locations.location)) {
-          return done(null, "Invalid rtm.locations.getList response");
+          return done(null, "Invalid rtm.locations.getList response: " + JSON.stringify(rsp));
         }
-		var locationMap = [];
-		rsp.locations.location.forEach(function(v) {
+        var locationMap = [];
+        rsp.locations.location.forEach(function(v) {
           locationMap[v.id] = v.name;
         });
         tasks = tasks.map(function(v){
@@ -54,6 +61,6 @@ module.exports = function(connection) {
         done({tasks: tasks});        
       });      
 
-	});        
+    });        
   };
 };

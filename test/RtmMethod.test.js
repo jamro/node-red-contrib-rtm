@@ -88,7 +88,38 @@ describe('RTM Method', function() {
     });
   });
 
+  it('should search for a single task', function(done) {
+    var method = new RtmMethod(connection);    
+    connection.getLocationsListResponse = {locations: {location: [{id: 4, name: "Loc23" }]}};    
+    connection.getTaskListResponse = {id: 82513, tasks: {list: [
+      {
+	    taskseries: {name: "task FFF"}
+      }
+    ]}};
+    method.search("my query", function(result, err) {
+      should.exist(result);
+      should.not.exist(err);
+      result.should.have.property('tasks');
+      result.tasks.should.have.length(1);
+      result.tasks[0].should.have.property('name', 'task FFF');
+      done();
+    });
+  });
 
+  
+  it('should search for no tasks', function(done) {
+    var method = new RtmMethod(connection);    
+    connection.getLocationsListResponse = {locations: {location: [{id: 4, name: "Loc23" }]}};    
+    connection.getTaskListResponse = {id: 82513, tasks: {}};
+    method.search("my query", function(result, err) {
+      should.exist(result);
+      should.not.exist(err);
+      result.should.have.property('tasks');
+      result.tasks.should.have.length(0);
+      done();
+    });
+  });
+  
   it('should throw error if search response is incomplete', function(done) {
     var method = new RtmMethod(connection);    
     connection.getTaskListResponse = {tasks: null};
