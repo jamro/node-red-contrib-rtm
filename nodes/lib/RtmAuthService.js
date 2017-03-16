@@ -18,10 +18,33 @@ module.exports = function(options) {
   var frob = '';
   var token = '';
   
+  /**
+   * Verifies if frob was received from Remember The Milk server
+   * @return true if frob was received and can be used to authorize, otherwise false
+   */
   this.hasFrob = function() {
     return (frob !== '');
   };
   
+  /**
+   * Handles authorization to Remember The Milk server. The authorization process consist of
+   * two steps:
+   * 1. Receiving Frob from Remember The Milk server and generating auth URL
+   * 2. Generation of auth Token that will be used during furher communication with RTM server
+   * 
+   * After first call, message with field type set to "auth-url" will be returned (as callback parameter) 
+   * Content field will be set to the URL. User must visit this URL to grant authorize and grant 
+   * proper permissions.
+   *
+   * Further calls will return authorization Token that can be used when making API calls. 
+   * IMPORTANT: user must visit Auth URL and grant permission before 2nd call. 
+   * Otherwise an error will be returned 
+   *
+   * In case of error, JSON with type field set to "error" will be returned. Field content will
+   * be set to message of the error.
+   * 
+   * @param done callback with one argument for JSON response that match following format {type: ..., content: ...}
+   */
   this.call = function(done) {
     if(!frob) {
       handleAuth(done);

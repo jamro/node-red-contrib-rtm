@@ -25,19 +25,43 @@ module.exports = function(options) {
     
   var noTokenMethods = ["rtm.auth.getFrob", "rtm.auth.getToken", "rtm.test.echo"];
   var noTimelineMethods = ["rtm.auth.getFrob", "rtm.auth.getToken", "rtm.test.echo", "rtm.timelines.create", "rtm.auth.checkToken"];
-  
+  /**
+   * Sets maximum rate of RTM API calls. According to RTM docs, API cannot be called 
+   * more often than once per second and this is the recommended value
+   * @param value - limit of API calls rate provided in requests per second
+   */
   this.setCallRateLimit = function(value) {
     callRateLimit = value; //rps
   };
   
+  /**
+   * Set authorization token required for most of API calls. 
+   * @param value - authorization token given as a String
+   * @see RtmAuthService.js
+   */
   this.setToken = function(value) {
     token = value;
   };
   
+  /**
+   * All RTM calls are assigned to specific timeline what allows to undo them.
+   * Timeline is required for most of API calls. Read RTM API docs for more information.
+   *
+   * In most cases there is no need to set Timeline manualy since this library will do it
+   * automatically. However, for more advanced scenarios there is such possibility.
+   * 
+   * @param value - timeline of RTM API
+   */
   this.setTimeline = function(value) {
     timeline = value;
   };
   
+  /**
+   * Genrates authorization URL basing on provided frob
+   * 
+   * @param frob - authorization Frob received from RTM API
+   * @return URL where user can authorize the application to access his RTM account
+   */
   this.getAuthUrl = function(frob) {  
     if(!frob) {
       throw new Error('frob is required');
@@ -46,6 +70,11 @@ module.exports = function(options) {
     return 'https://www.rememberthemilk.com/services/auth/?api_key=' + options.key + '&perms=write&frob=' + frob + '&api_sig=' + signature;
   };
   
+  /**
+   * Returns name of currently authorized user (assigned to current auth token)
+   * @param done - callback executed to return async response. It has two arguments: done(result, error)
+   * @see setToken()
+   */
   this.getUserName = function(done) {
     this.call('rtm.auth.checkToken', {}, function(rsp, err){  
       if(err) {
@@ -58,6 +87,11 @@ module.exports = function(options) {
     });
   };
   
+  /**
+   * Check if current token is valid and thus the user is authorized
+   * @param done - callback executed to return async response. It has two arguments: done(result, error)
+   * @see setToken()
+   */
   this.hasValidToken = function(done) {
     if(!token) {
       return done(false);
@@ -70,10 +104,21 @@ module.exports = function(options) {
     });
   };
   
+  /**
+   * @return true if token was set (without verifying its validity), otherwise returns false
+   * @see setToken()
+   */  
   this.hasToken = function() {
     return token ? true : false;
   };
   
+  /**
+   * Call RTM API. See RTM docs for more information
+   *
+   * @param method - RTM method to be called
+   * @param args - Array of arguments that will be passed to RTM API call. Token and timeline arguments will be added automatically
+   * @param done - callback executed to return async response. It has two arguments: done(result, error)  
+   */
   this.call = function(method, args, done) {
     if(typeof(args) != 'object') {
       return done(null, "args parameter must be an object!");
